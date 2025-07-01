@@ -1,6 +1,7 @@
 using Json2SharpApp.Enums;
 using Json2SharpApp.Handlers;
 using System.CommandLine;
+using System.CommandLine.Parsing;
 
 namespace Json2SharpApp;
 
@@ -35,8 +36,12 @@ internal sealed class Program
                 => await RootHandlerAsync(rootCommand, inputFile, outputPath, nameOption, jsonOption, configOptions),
             inputOption, outputOption, nameOption, jsonOption, configOption
         );
+        #region debug
+        var commando = "json2sharp -i D:\\json.txt";
+        var parsedArgs = commando.Split(' ');
+        #endregion
 
-        return await rootCommand.InvokeAsync(args);
+        return await rootCommand.InvokeAsync(parsedArgs);
     }
 
     /// <summary>

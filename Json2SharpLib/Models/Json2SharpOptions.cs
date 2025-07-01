@@ -23,4 +23,9 @@ public sealed record Json2SharpOptions
     /// Parsing options for the Python language.
     /// </summary>
     public Json2SharpPythonOptions PythonOptions { get; init; } = new();
+
+    /// <summary>
+    /// Typescript options for TS language
+    /// </summary>
+    public Json2SharpTypeScriptOptions TypeScriptOptions { get; init; } = new();
 }

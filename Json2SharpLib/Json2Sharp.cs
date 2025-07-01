@@ -1,6 +1,7 @@
 using Json2SharpLib.Emitters.Abstractions;
 using Json2SharpLib.Emitters.CSharp;
 using Json2SharpLib.Emitters.Python;
+using Json2SharpLib.Emitters.TypeScript;
 using Json2SharpLib.Enums;
 using Json2SharpLib.Extensions;
 using Json2SharpLib.Models;
@@ -331,6 +332,7 @@ public static class Json2Sharp
             Language.Python when options.PythonOptions.UseDataClass
                 && options.PythonOptions.AddTypeHints => new PythonDataClassEmitter(options.PythonOptions),
             Language.Python => new PythonClassEmitter(options.PythonOptions),
+            Language.TypeScript => new TypeScriptClassEmitter(options.TypeScriptOptions),
             _ => throw new UnreachableException($"Emitter for language {options.TargetLanguage} was not implemented."),
         };
     }

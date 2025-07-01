@@ -1,4 +1,5 @@
 using Json2SharpLib.Enums;
+using Json2SharpLib.Enums.Typescript;
 using System.Collections.Frozen;
 
 namespace Json2SharpApp.Common;
@@ -43,5 +44,21 @@ internal static class CSharpStatics
         ["ntj"] = CSharpSerializationAttribute.NewtonsoftJson,
         ["newtonsoft"] = CSharpSerializationAttribute.NewtonsoftJson,
         ["newtonsoftjson"] = CSharpSerializationAttribute.NewtonsoftJson,
+    }.ToFrozenDictionary();
+}
+
+/// <summary>
+/// Contains <see langword="static"/> data related to TypeScript serialization. 
+/// </summary>
+internal static class TypeScriptStatics
+{
+    /// <summary>
+    /// Define CLI options for object type attribute
+    /// </summary>
+    public static FrozenDictionary<string, TypeScriptTargetType> ObjectTypes { get; } = new Dictionary<string, TypeScriptTargetType>()
+    {
+        ["class"] = TypeScriptTargetType.Class,
+        ["interface"] = TypeScriptTargetType.Interface,
+        ["type"] = TypeScriptTargetType.Type
     }.ToFrozenDictionary();
 }

@@ -1,5 +1,6 @@
 using Json2SharpApp.Common;
 using Json2SharpLib.Enums;
+using Json2SharpLib.Enums.Typescript;
 using Json2SharpLib.Models;
 using Json2SharpLib.Models.LanguageOptions;
 using System.Diagnostics.CodeAnalysis;
@@ -31,6 +32,7 @@ internal sealed class ConfigHandler
                     TargetLanguage = targetLanguage,
                     CSharpOptions = (targetLanguage is Language.CSharp) ? ParseCSharpOptions(options) : new(),
                     PythonOptions = (targetLanguage is Language.Python) ? ParsePythonOptions(options) : new(),
+                    TypeScriptOptions = (targetLanguage is Language.TypeScript) ? ParseTypeScriptOptions(options) : new(),
                 };
 
             return true;
@@ -52,6 +54,9 @@ internal sealed class ConfigHandler
     {
         if (configOptions.Any(x => x is "py" or "python"))
             return Language.Python;
+
+        if (configOptions.Any(x => x is "ts" or "typescript"))
+            return Language.TypeScript;
 
         return Language.CSharp;
     }
@@ -112,6 +117,27 @@ internal sealed class ConfigHandler
             UseDataClass = !configOptions.Any(x => x is "ndc" or "nodataclass"),
             UseOptional = configOptions.Any(x => x is "opt" or "optional"),
 
+            IndentationCharacterAmount = (int.TryParse(indentationAmountOption, out var indentationAmount))
+                ? indentationAmount
+                : 4,
+
+            IndentationPaddingCharacter = (configOptions.Contains("tab"))
+                ? IndentationCharacterType.Tab
+                : IndentationCharacterType.Space,
+        };
+    }
+
+    private static Json2SharpTypeScriptOptions ParseTypeScriptOptions(IReadOnlyList<string> configOptions)
+    {
+        var indentationAmountOption = configOptions.FirstOrDefault(x => x.StartsWith("ind:", StringComparison.Ordinal))?[4..];
+
+        return new()
+        {
+            IsMonoObject = !configOptions.Any(x => x is "mono" or "monoobject"),
+            ExportType = configOptions.Contains("default") ? TypeScriptExportType.Default : TypeScriptExportType.Named,
+            TargetType = TypeScriptStatics.ObjectTypes.GetValueOrDefault(
+                configOptions.FirstOrDefault(TypeScriptStatics.ObjectTypes.ContainsKey) ?? "class"
+            ),
             IndentationCharacterAmount = (int.TryParse(indentationAmountOption, out var indentationAmount))
                 ? indentationAmount
                 : 4,
