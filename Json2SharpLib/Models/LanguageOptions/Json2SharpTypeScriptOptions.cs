@@ -15,6 +15,12 @@ public sealed record Json2SharpTypeScriptOptions : BaseLanguageOptions
     public bool IsMonoObject { get; init; } = true;
 
     /// <summary>
+    /// Define how a same properties in array will combined if there are more than one type. <br />
+    /// Default is <see cref="TypeScriptCombineType.Any"/>
+    /// </summary>
+    public TypeScriptCombineType CombineType { get; init; } = TypeScriptCombineType.Any;
+
+    /// <summary>
     /// Define how entity will be exported. <br />
     /// Default is <see cref="TypeScriptExportType.Named"/>
     /// </summary>

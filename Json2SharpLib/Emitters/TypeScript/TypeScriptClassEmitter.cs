@@ -12,6 +12,7 @@ internal class TypeScriptClassEmitter : CodeEmitter
     private readonly string _export;
     private readonly string _exportType;
     private readonly string _targetType;
+    private readonly TypeScriptCombineType _combineType;
     private readonly bool _isMonoObject;
     private readonly string _indentationPadding;
 
@@ -26,6 +27,7 @@ internal class TypeScriptClassEmitter : CodeEmitter
         _exportType = options.ExportType is TypeScriptExportType.Default ?
                        "default" : String.Empty;
         _isMonoObject = options.IsMonoObject;
+        _combineType = options.CombineType;
 
         _indentationPadding = new string(
            options.IndentationPaddingCharacter is IndentationCharacterType.Space ? ' ' : '\t',
@@ -54,19 +56,51 @@ internal class TypeScriptClassEmitter : CodeEmitter
         var extraTypes = new List<string>();
         var stringBuilder = new StringBuilder();
 
-        // Class declaration
-        stringBuilder.Append($"{_export} {_exportType} {_targetType} {objectName}");
-        stringBuilder.Append("{");
+        if (_isMonoObject)
+        {
+            BuildMonoObject(stringBuilder, properties);
+        }
+        else
+        {
+            BuildObjects(stringBuilder, properties);
+        }
 
-        BuildProperties(stringBuilder, extraTypes, properties);
-
-        return "";
+        return stringBuilder.ToStringAndClear();
     }
 
-    private void BuildProperties(StringBuilder stringBuilder, List<string> extraTypes, IReadOnlyList<ParsedJsonProperty> properties)
+    private void BuildMonoObject(StringBuilder stringBuilder, IReadOnlyList<ParsedJsonProperty> properties)
     {
+
         foreach (var property in properties)
         {
+            // Processes custom types and nullable arrays
+
+        }
+    }
+
+    private void BuildObjects(StringBuilder stringBuilder, IReadOnlyList<ParsedJsonProperty> properties)
+    {
+        // Define whether neccessary to define a root type
+        var hasRootType = false;
+        var typeMap = new Dictionary<string, string>();
+        var jsonFirstElement = properties[0];
+
+        switch 
+        foreach (var property in properties)
+        {
+            if (HandleCustomType(stringBuilder, property, typeMap))
+                continue;
+
+        }
+    }
+
+    private bool HandleCustomType(StringBuilder stringBuilder, ParsedJsonProperty property, Dictionary<string, string> typeMap)
+    {
+        switch (property.JsonElement.ValueKind)
+        {
+            case JsonValueKind.Object:
+                typeMap.Add(property, )
+                return true;
 
         }
     }

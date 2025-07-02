@@ -134,6 +134,7 @@ internal sealed class ConfigHandler
         return new()
         {
             IsMonoObject = !configOptions.Any(x => x is "mono" or "monoobject"),
+            CombineType = configOptions.Contains("union") ? TypeScriptCombineType.Union : TypeScriptCombineType.Any,
             ExportType = configOptions.Contains("default") ? TypeScriptExportType.Default : TypeScriptExportType.Named,
             TargetType = TypeScriptStatics.ObjectTypes.GetValueOrDefault(
                 configOptions.FirstOrDefault(TypeScriptStatics.ObjectTypes.ContainsKey) ?? "class"

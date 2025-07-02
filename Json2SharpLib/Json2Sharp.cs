@@ -61,6 +61,12 @@ public static class Json2Sharp
     public static string Parse(string objectName, string rawJson, ICodeEmitter emitter)
     {
         using var jsonDocument = JsonDocument.Parse(rawJson, _jsonOptions);
+        if (emitter is TypeScriptClassEmitter)
+        {
+            return (IsJsonValidForTs(jsonDocument, out var jsonElementForTs))
+            ? emitter.Parse(objectName, jsonElementForTs)
+            : throw new InvalidOperationException(_parsingErrorMessage);
+        }
         return (IsJsonValid(jsonDocument, out var jsonElement))
             ? emitter.Parse(objectName, jsonElement)
             : throw new InvalidOperationException(_parsingErrorMessage);
@@ -237,6 +243,12 @@ public static class Json2Sharp
     public static string Parse(string objectName, ReadOnlySequence<byte> utf8Json, ICodeEmitter emitter)
     {
         using var jsonDocument = JsonDocument.Parse(utf8Json, _jsonOptions);
+        if (emitter is TypeScriptClassEmitter)
+        {
+            return (IsJsonValidForTs(jsonDocument, out var jsonElementForTs))
+            ? emitter.Parse(objectName, jsonElementForTs)
+            : throw new InvalidOperationException(_parsingErrorMessage);
+        }
         return (IsJsonValid(jsonDocument, out var jsonElement))
             ? emitter.Parse(objectName, jsonElement)
             : throw new InvalidOperationException(_parsingErrorMessage);
@@ -314,6 +326,19 @@ public static class Json2Sharp
         var elementCopy = toParse;
 
         return toParse.ValueKind is JsonValueKind.Object && arrayElements.Skip(1).All(x => x.SameTypeAs(elementCopy));
+    }
+
+    private static bool IsJsonValidForTs(JsonDocument jsonDocument, out JsonElement toParse)
+    {
+        if (jsonDocument.RootElement.ValueKind is JsonValueKind.Object
+            || jsonDocument.RootElement.ValueKind is JsonValueKind.Array)
+        {
+            toParse = jsonDocument.RootElement;
+            return true;
+        }
+
+        toParse = default;  // This will be an "Undefined" Json object.
+        return false;
     }
 
     /// <summary>
